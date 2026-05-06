@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
+  <title>许氏宗谱 · 世系图谱</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+      background: #f8f4ed;
+      color: #2c2b28;
+      padding: 16px 12px;
+      min-height: 100vh;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding: 24px 20px;
+      }
+    }
+
+    .app {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* 头部 */
+    .app-header {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (min-width: 768px) {
+      .app-header {
+        margin-bottom: 28px;
+        align-items: baseline;
+      }
+    }
+
+    .title-section h1 {
+      font-weight: 500;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: #5b4637;
+      border-left: 6px solid #b48c5c;
+      padding-left: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .title-section h1 {
+        font-size: 2.8rem;
+        letter-spacing: 4px;
+        border-left-width: 8px;
+        padding-left: 22px;
+      }
+    }
+
+    .title-section .sub {
+      margin-top: 6px;
+      color: #7e6a58;
+      font-size: 0.85rem;
+      padding-left: 22px;
+    }
+
+    @media (min-width: 768px) {
+      .title-section .sub {
+        font-size: 1rem;
+        padding-left: 30px;
+      }
+    }
+
+    .upload-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      background: #e4d9cd;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #3b3127;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      border: 1px solid #cdbcab;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        gap: 6px;
+      }
+    }
+
+    .btn:hover {
+      background: #d6c6b6;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    /* 顶部搜索栏 */
+    .search-bar {
+      background: #fffbf7;
+      padding: 12px 16px;
+      border-radius: 40px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      border: 1px solid #e7dbcf;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .search-bar {
+        padding: 16px 24px;
+        border-radius: 60px;
+        margin-bottom: 24px;
+        flex-wrap: nowrap;
+      }
+    }
+
+    .search-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #f2ebe3;
+      border-radius: 48px;
+      padding: 4px 8px 4px 16px;
+      min-width: 180px;
+    }
+
+    @media (min-width: 768px) {
+      .search-wrapper {
+        padding: 4px 8px 4px 22px;
+      }
+    }
+
+    .search-wrapper span {
+      color: #8f775f;
+      margin-right: 6px;
+      font-size: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .search-wrapper span {
+        font-size: 1.2rem;
+        margin-right: 8px;
+      }
+    }
+
+    .search-wrapper input {
+      border: none;
+      background: transparent;
+      padding: 10px 0;
+      font-size: 0.95rem;
+      width: 100%;
+      outline: none;
+      color: #2c2b28;
+    }
+
+    @media (min-width: 768px) {
+      .search-wrapper input {
+        padding: 12px 0;
+        font-size: 1rem;
+      }
+    }
+
+    .search-wrapper input::placeholder {
+      color: #ae9a86;
+    }
+
+    .stats-badge {
+      background: #e3d5c8;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      color: #3f3225;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+      .stats-badge {
+        margin-left: 20px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* 主内容区 - 移动端堆叠，桌面端并排 */
+    .main-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .main-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* 左侧面板 */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* 字辈筛选卡片 */
+    .generation-filter-card {
+      background: #fffcf8;
+      border-radius: 20px;
+      padding: 16px 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      border: 1px solid #e5d8cc;
+    }
+
+    @media (min-width: 768px) {
+      .generation-filter-card {
+        padding: 18px 16px;
+      }
+    }
+
+    .filter-title {
+      font-size: 0.85rem;
+      color: #7a6854;
+      margin-bottom: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    @media (min-width: 768px) {
+      .filter-title {
+        font-size: 0.9rem;
+      }
+    }
+
+    .gen-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    @media (min-width: 768px) {
+      .gen-buttons {
+        gap: 8px;
+      }
+    }
+
+    .gen-btn {
+      background: transparent;
+      border: 1.5px solid #d2c1b0;
+      color: #4f3e2e;
+      padding: 6px 14px;
+      border-radius: 36px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+      flex: 0 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .gen-btn {
+        padding: 8px 18px;
+        font-size: 0.95rem;
+      }
+    }
+
+    .gen-btn:hover {
+      background: #e8ddd2;
+    }
+
+    .gen-btn.active {
+      background: #b28b65;
+      border-color: #b28b65;
+      color: white;
+    }
+
+    /* 宗亲名录卡片 */
+    .member-list-panel {
+      background: #fffcf8;
+      border-radius: 24px;
+      padding: 16px 8px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.03);
+      border: 1px solid #e5d8cc;
+      display: flex;
+      flex-direction: column;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    @media (min-width: 768px) {
+      .member-list-panel {
+        padding: 18px 8px;
+        max-height: 60vh;
+      }
+    }
+
+    .panel-header {
+      padding: 0 12px 14px;
+      border-bottom: 1px dashed #cfbead;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .panel-header {
+        padding: 0 12px 16px;
+      }
+    }
+
+    .panel-header h3 {
+      font-weight: 500;
+      color: #4a3b2f;
+      font-size: 1.2rem;
+    }
+
+    @media (min-width: 768px) {
+      .panel-header h3 {
+        font-size: 1.4rem;
+      }
+    }
+
+    #listCount {
+      background: #e3d5c8;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+      #listCount {
+        padding: 4px 12px;
+        font-size: 0.9rem;
+      }
+    }
+
+    #memberListContainer {
+      flex: 1;
+    }
+
+    .member-item {
+      padding: 12px 14px;
+      margin: 2px 4px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.1s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid transparent;
+    }
+
+    @media (min-width: 768px) {
+      .member-item {
+        padding: 14px 18px;
+        margin: 2px 6px;
+        border-left-width: 5px;
+      }
+    }
+
+    .member-item:hover {
+      background: #f1e9e0;
+    }
+
+    .member-item.active {
+      background: #e1d2c2;
+      border-left-color: #a87e58;
+      font-weight: 500;
+    }
+
+    .member-name {
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    @media (min-width: 768px) {
+      .member-name {
+        font-size: 1.05rem;
+      }
+    }
+
+    .member-meta {
+      font-size: 0.75rem;
+      color: #7c6854;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+      .member-meta {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* 右侧详情区 */
+    .detail-panel {
+      background: #fffcf8;
+      border-radius: 24px;
+      padding: 20px 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.03);
+      border: 1px solid #e5d8cc;
+      scroll-margin-top: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .detail-panel {
+        border-radius: 32px;
+        padding: 26px 30px;
+      }
+    }
+
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      background: #f6efe7;
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .profile-section {
+        flex-direction: row;
+        gap: 25px 40px;
+        margin-bottom: 30px;
+        padding: 20px 28px;
+        border-radius: 28px;
+      }
+    }
+
+    .profile-avatar {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .profile-avatar .big-name {
+      font-size: 2rem;
+      font-weight: 450;
+      color: #3e2f21;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 768px) {
+      .profile-avatar .big-name {
+        font-size: 2.5rem;
+      }
+    }
+
+    .profile-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 16px;
+      flex: 1;
+    }
+
+    @media (min-width: 480px) {
+      .profile-details {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .profile-details {
+        grid-template-columns: repeat(auto-fill, minmax(160px, auto));
+        gap: 12px 28px;
+      }
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8a7763;
+    }
+
+    @media (min-width: 768px) {
+      .detail-label {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+      }
+    }
+
+    .detail-value {
+      font-size: 0.95rem;
+      color: #2f241b;
+      font-weight: 450;
+      padding-top: 3px;
+      word-break: break-word;
+    }
+
+    @media (min-width: 768px) {
+      .detail-value {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* 关系图区块 */
+    .relation-title {
+      font-size: 1rem;
+      margin: 10px 0 16px;
+      color: #5c493a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .relation-title {
+        font-size: 1.2rem;
+        margin: 10px 0 20px;
+      }
+    }
+
+    .relation-title span {
+      background: #d9caba;
+      height: 2px;
+      flex: 1;
+    }
+
+    .tree-container {
+      background: #faf5ef;
+      border-radius: 24px;
+      padding: 20px 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    @media (min-width: 768px) {
+      .tree-container {
+        border-radius: 32px;
+        padding: 28px 20px;
+      }
+    }
+
+    .family-tree-vis {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 500px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .family-tree-vis {
+        min-width: 600px;
+      }
+    }
+
+    .tree-level {
+      display: flex;
+      justify-content: center;
+      gap: 12px 20px;
+      flex-wrap: wrap;
+      margin: 4px 0;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .tree-level {
+        gap: 20px 40px;
+        margin: 6px 0;
+      }
+    }
+
+    .tree-node {
+      background: #e7ddd2;
+      border-radius: 36px;
+      padding: 8px 16px;
+      min-width: 90px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      border: 1px solid #cfbeab;
+      transition: all 0.1s;
+      cursor: pointer;
+      font-weight: 500;
+      color: #3d2e20;
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 768px) {
+      .tree-node {
+        border-radius: 48px;
+        padding: 12px 24px;
+        min-width: 120px;
+        font-size: 1rem;
+      }
+    }
+
+    .tree-node.self-node {
+      background: #b48c5c;
+      color: white;
+      border-color: #9c7446;
+      box-shadow: 0 4px 8px rgba(160, 110, 60, 0.15);
+    }
+
+    .tree-node:hover {
+      background: #cfbcab;
+      transform: scale(1.02);
+    }
+
+    .tree-node.self-node:hover {
+      background: #a3794e;
+    }
+
+    .connector-line {
+      color: #b7a089;
+      font-size: 1rem;
+      margin: 2px 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .connector-line {
+        font-size: 1.2rem;
+      }
+    }
+
+    .empty-node {
+      opacity: 0.5;
+      font-style: italic;
+      background: #e9e1d8;
+      cursor: default;
+    }
+
+    .empty-node:hover {
+      background: #e9e1d8;
+      transform: none;
+    }
+
+    .note-text {
+      margin-top: 12px;
+      color: #7b6a58;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .note-text {
+        margin-top: 15px;
+        font-size: 0.9rem;
+      }
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: #9c8b7b;
+      font-size: 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+      footer {
+        margin-top: 35px;
+        font-size: 0.9rem;
+      }
+    }
+
+    .gender-badge {
+      font-size: 0.7rem;
+      background: #d6c6b6;
+      padding: 2px 6px;
+      border-radius: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .gender-badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        margin-left: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <div class="title-section">
+      <h1>許氏宗譜</h1>
+      <div class="sub">文化传承 万世流芳</div>
+    </div>
+    <div class="upload-area">
+      <button class="btn" id="uploadBtn">📤 更新族谱</button>
+      <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .json">
+    </div>
+  </div>
+
+  <!-- 顶部搜索栏 -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索姓名、职业、父亲…" autocomplete="off">
+    </div>
+    <div class="stats-badge" id="statsDisplay">加载数据…</div>
+  </div>
+
+  <div class="main-grid">
+    <!-- 左侧：字辈筛选 + 宗亲名录 -->
+    <div class="left-panel">
+      <!-- 字辈筛选 -->
+      <div class="generation-filter-card">
+        <div class="filter-title">📌 按字辈筛选</div>
+        <div class="gen-buttons" id="genFilterContainer"></div>
+      </div>
+      
+      <!-- 宗亲名录 -->
+      <div class="member-list-panel">
+        <div class="panel-header">
+          <h3>宗亲名录</h3>
+          <span id="listCount">0</span>
+        </div>
+        <div id="memberListContainer"></div>
+      </div>
+    </div>
+
+    <!-- 右侧详情 + 关系图 -->
+    <div class="detail-panel" id="detailPanel">
+      <div id="profileArea">
+        <div class="profile-section">
+          <div class="profile-avatar">
+            <div class="big-name" id="detailName">许盛淼</div>
+            <div style="margin-top:6px; color:#7b6248;" id="detailGenLifespan"></div>
+          </div>
+          <div class="profile-details" id="profileDetails"></div>
+        </div>
+      </div>
+      <div class="relation-title">
+        世系图谱 · 上三代 至 下三代
+        <span></span>
+      </div>
+      <div class="tree-container" id="treeContainer"></div>
+      <div class="note-text">👆 点击图中任意名字可切换查看</div>
+    </div>
+  </div>
+  <footer>Copyright © 2026湖北省通山县天梯许氏家族All rights reserved. </footer>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- 检测是否为移动设备 ----------
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+             || window.innerWidth < 768;
+    }
+
+    // ---------- 内置数据 ----------
+    const RAW_DATA = [
+      ["姓名","性别","生","卒","配偶","父亲","字辈","职业","葬于","备注"],
+      ["许盛淼","男",1949,2019,"常长贵","许克城","盛","无","老窑窝背里山",""],
+      ["许杨检","男",1991,"？","沈钰","许得来","杨","教师","",""],
+      ["许杨军","男",1985,"？","李梅","许得来","杨","鞋匠","","迁居到重庆"],
+      ["许杨胜","男",1986,"？","涂亚妮","许得来","杨","建筑师","",""],
+      ["许得来","男",1957,1992,"吴云仙","许盛淼","德","矿工","老窑窝上屋颈","殁于矿难"],
+      ["许德四","男",1960,"？","曹翠花","许盛淼","德","无","","有文化"],
+      ["许德国","男",1959,"？","喻兰香","许盛淼","德","矿工","",""],
+      ["许德利","男",1955,"？","无","许盛淼","德","矿工","",""],
+      ["许德五","男",1962,"？","陈秋花","许盛淼","德","吊机司","","迁居到丹阳"],
+      ["许杨水","男",1981,"？","李清平","许德国","杨","油漆工","",""],
+      ["许杨拯","男",1989,"？","","许德国","杨","技工","",""],
+      ["许海洋","男",1991,"？","马欢","许德国","杨","油漆工","","迁居到阳新"],
+      ["许杨进","男",1988,"？","王彩丽","许德四","杨","设计师","",""],
+      ["许杨广","男",1986,"？","张细柳","许德四","杨","设计师","",""],
+      ["许丹","男",1990,"？","","许德五","杨","销售经理","","随父迁居到丹阳"],
+      ["许佳乐","男",2008,"","","许杨水","先","","",""],
+      ["许佳荣","女",2015,"？","","许杨水","先","","",""],
+      ["许梦灵","女",2011,"？","","许杨军","先","","",""],
+      ["许心锐","女",2015,"？","","许杨军","先","","",""],
+      ["许子煜","男",2012,"？","","许杨胜","先","","",""],
+      ["许佳城","男",2016,"？","","许杨胜","先","","",""],
+      ["许诗瑶","女",2018,"？","","许杨胜","先","","",""],
+      ["许先行","男",2024,"？","","许杨检","先","","",""],
+      ["许思棋","女",2012,"？","","许杨广","先","","",""],
+      ["许思涵","女",2013,"","","许杨广","先","","",""],
+      ["许优","男",2015,"？","","许杨广","先","","",""],
+      ["许先达","男",2012,"？","","许杨进","先","","",""],
+      ["许苗","女",2015,"？","","许杨进","先","","",""]
+    ];
+
+    function parseData(matrix) {
+      const headers = matrix[0];
+      return matrix.slice(1).map(row => {
+        const obj = {};
+        headers.forEach((h, i) => { obj[h] = row[i] !== undefined ? row[i] : ''; });
+        return {
+          name: obj['姓名'] || '',
+          gender: obj['性别'] || '',
+          birth: obj['生'] !== undefined ? obj['生'] : '',
+          death: obj['卒'] !== undefined ? obj['卒'] : '',
+          spouse: obj['配偶'] || '',
+          father: obj['父亲'] || '',
+          generation: obj['字辈'] || '',
+          occupation: obj['职业'] || '',
+          burial: obj['葬于'] || '',
+          remark: obj['备注'] || ''
+        };
+      }).filter(p => p.name);
+    }
+
+    let familyData = parseData(RAW_DATA);
+    let personMap = new Map();
+    let childrenMap = new Map();
+    let generationSet = new Set();
+
+    function rebuildIndex() {
+      personMap.clear();
+      childrenMap.clear();
+      generationSet.clear();
+      familyData.forEach(p => {
+        personMap.set(p.name, p);
+        if (p.generation) generationSet.add(p.generation);
+        if (p.father) {
+          if (!childrenMap.has(p.father)) childrenMap.set(p.father, []);
+          childrenMap.get(p.father).push(p);
+        }
+      });
+    }
+    rebuildIndex();
+
+    // 默认筛选改为"全部"
+    let currentGenFilter = '全部';
+    let searchTerm = '';
+
+    const memberContainer = document.getElementById('memberListContainer');
+    const listCountSpan = document.getElementById('listCount');
+    const statsDisplay = document.getElementById('statsDisplay');
+    const searchInput = document.getElementById('searchInput');
+    const genFilterContainer = document.getElementById('genFilterContainer');
+    const detailName = document.getElementById('detailName');
+    const detailGenLifespan = document.getElementById('detailGenLifespan');
+    const profileDetails = document.getElementById('profileDetails');
+    const treeContainer = document.getElementById('treeContainer');
+    const detailPanel = document.getElementById('detailPanel');
+
+    let currentPerson = familyData[0];
+
+    function renderGenButtons() {
+      const gens = Array.from(generationSet).sort();
+      let html = '';
+      // "全部"按钮放在最前面
+      html += `<button class="gen-btn ${currentGenFilter === '全部' ? 'active' : ''}" data-gen="全部">全部</button>`;
+      gens.forEach(gen => {
+        const activeClass = gen === currentGenFilter ? 'active' : '';
+        html += `<button class="gen-btn ${activeClass}" data-gen="${gen}">${gen}字辈</button>`;
+      });
+      genFilterContainer.innerHTML = html;
+      
+      document.querySelectorAll('.gen-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const gen = btn.dataset.gen;
+          currentGenFilter = gen;
+          renderGenButtons();
+          filterAndRenderList();
+        });
+      });
+    }
+
+    function getFilteredData() {
+      let filtered = familyData;
+      if (currentGenFilter !== '全部') {
+        filtered = filtered.filter(p => p.generation === currentGenFilter);
+      }
+      if (searchTerm.trim()) {
+        const term = searchTerm.trim().toLowerCase();
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(term) ||
+          (p.occupation && p.occupation.toLowerCase().includes(term)) ||
+          (p.father && p.father.toLowerCase().includes(term)) ||
+          (p.spouse && p.spouse.toLowerCase().includes(term))
+        );
+      }
+      return filtered;
+    }
+
+    function filterAndRenderList() {
+      const filtered = getFilteredData();
+      renderMemberList(filtered);
+      listCountSpan.textContent = `${filtered.length}`;
+      statsDisplay.textContent = `📌 ${familyData.length} 位族人 · ${generationSet.size} 字辈`;
+    }
+
+    // 滚动到详情面板（仅移动端）
+    function scrollToDetailIfMobile() {
+      if (isMobileDevice()) {
+        setTimeout(() => {
+          detailPanel.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }, 100);
+      }
+    }
+
+    function renderMemberList(list) {
+      if (list.length === 0) {
+        memberContainer.innerHTML = '<div style="padding:20px; color:#9a8a7a; text-align:center;">暂无族人</div>';
+        return;
+      }
+      let html = '';
+      list.forEach(p => {
+        const activeClass = (currentPerson && currentPerson.name === p.name) ? 'active' : '';
+        const lifespan = p.birth ? `${p.birth}–${p.death}` : '';
+        html += `<div class="member-item ${activeClass}" data-name="${p.name}">
+          <span class="member-name">${p.name} <span class="gender-badge">${p.gender||''}</span></span>
+          <span class="member-meta">${lifespan}</span>
+        </div>`;
+      });
+      memberContainer.innerHTML = html;
+      
+      document.querySelectorAll('.member-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const name = el.dataset.name;
+          const person = personMap.get(name);
+          if (person) {
+            currentPerson = person;
+            renderMemberList(getFilteredData());
+            renderProfileAndTree(person);
+            scrollToDetailIfMobile(); // 移动端自动滚动
+          }
+        });
+      });
+    }
+
+    function renderProfileAndTree(person) {
+      detailName.textContent = person.name;
+      const birthDeath = `${person.birth || '?'} – ${person.death || '?'}`;
+      detailGenLifespan.textContent = `${person.generation || ''}字辈 · ${birthDeath}`;
+      
+      const details = [
+        { label: '性别', value: person.gender || '—' },
+        { label: '配偶', value: person.spouse && person.spouse!=='无' ? person.spouse : '无' },
+        { label: '父亲', value: person.father || '—' },
+        { label: '职业', value: person.occupation || '—' },
+        { label: '葬于', value: person.burial || '—' },
+        { label: '备注', value: person.remark || '—' }
+      ];
+      
+      let detailsHtml = '';
+      details.forEach(d => {
+        detailsHtml += `<div class="detail-item"><span class="detail-label">${d.label}</span><span class="detail-value">${d.value}</span></div>`;
+      });
+      profileDetails.innerHTML = detailsHtml;
+
+      drawFamilyTree(person);
+    }
+
+    function getAncestorsChain(person) {
+      const chain = [];
+      let current = person;
+      for (let i=0; i<3; i++) {
+        const fatherName = current.father;
+        if (!fatherName) break;
+        const father = personMap.get(fatherName);
+        if (!father) break;
+        chain.unshift(father);
+        current = father;
+      }
+      return chain;
+    }
+
+    function getDescendantsByGen(person, maxGen=3) {
+      const byGen = {1:[], 2:[], 3:[]};
+      let queue = [{ p: person, gen: 0 }];
+      const visited = new Set([person.name]);
+      while (queue.length) {
+        const { p, gen } = queue.shift();
+        if (gen > 0 && gen <= maxGen) {
+          byGen[gen].push(p);
+        }
+        if (gen < maxGen) {
+          const kids = childrenMap.get(p.name) || [];
+          kids.forEach(child => {
+            if (!visited.has(child.name)) {
+              visited.add(child.name);
+              queue.push({ p: child, gen: gen+1 });
+            }
+          });
+        }
+      }
+      return byGen;
+    }
+
+    function drawFamilyTree(person) {
+      const ancestors = getAncestorsChain(person);
+      const descendants = getDescendantsByGen(person, 3);
+      
+      const levels = [
+        { label: '曾祖', nodes: [] },
+        { label: '祖父', nodes: [] },
+        { label: '父亲', nodes: [] },
+        { label: '本人', nodes: [person] },
+        { label: '子女', nodes: descendants[1] || [] },
+        { label: '孙辈', nodes: descendants[2] || [] },
+        { label: '曾孙', nodes: descendants[3] || [] }
+      ];
+      
+      if (ancestors.length >= 3) levels[0].nodes = [ancestors[0]];
+      if (ancestors.length >= 2) levels[1].nodes = [ancestors[ancestors.length-2]];
+      if (ancestors.length >= 1) levels[2].nodes = [ancestors[ancestors.length-1]];
+      
+      let treeHtml = '<div class="family-tree-vis">';
+      levels.forEach((level, idx) => {
+        const nodes = level.nodes;
+        treeHtml += `<div class="tree-level">`;
+        if (nodes.length === 0) {
+          treeHtml += `<div class="tree-node empty-node">——</div>`;
+        } else {
+          nodes.forEach(node => {
+            const isSelf = node.name === person.name;
+            const selfClass = isSelf ? 'self-node' : '';
+            treeHtml += `<div class="tree-node ${selfClass}" data-name="${node.name}">${node.name}</div>`;
+          });
+        }
+        treeHtml += `</div>`;
+        if (idx < levels.length - 1) {
+          treeHtml += `<div class="connector-line">│</div>`;
+        }
+      });
+      treeHtml += '</div>';
+      treeContainer.innerHTML = treeHtml;
+      
+      // 设置滚动条居中
+      setTimeout(() => {
+        if (treeContainer.scrollWidth > treeContainer.clientWidth) {
+          const scrollLeft = (treeContainer.scrollWidth - treeContainer.clientWidth) / 2;
+          treeContainer.scrollLeft = scrollLeft;
+        }
+      }, 50);
+      
+      treeContainer.querySelectorAll('.tree-node[data-name]').forEach(el => {
+        el.addEventListener('click', () => {
+          const name = el.dataset.name;
+          const p = personMap.get(name);
+          if (p) {
+            currentPerson = p;
+            renderMemberList(getFilteredData());
+            renderProfileAndTree(p);
+            scrollToDetailIfMobile(); // 图谱点击后也滚动（如果切换了人）
+          }
+        });
+      });
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      filterAndRenderList();
+    });
+
+    const fileInput = document.getElementById('file-input');
+    const uploadBtn = document.getElementById('uploadBtn');
+    
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        if (window.XLSX) return resolve();
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function handleFileUpload(file) {
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith('.json')) {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        if (Array.isArray(json)) {
+          if (json.length && Array.isArray(json[0])) familyData = parseData(json);
+          else familyData = json.map(item => ({
+            name: item.姓名 || item.name, gender: item.性别 || item.gender, birth: item.生 ?? item.birth,
+            death: item.卒 ?? item.death, spouse: item.配偶 || item.spouse, father: item.父亲 || item.father,
+            generation: item.字辈 || item.generation, occupation: item.职业 || item.occupation,
+            burial: item.葬于 || item.burial, remark: item.备注 || item.remark
+          })).filter(p=>p.name);
+        }
+      } else if (fileName.endsWith('.csv')) {
+        const text = await file.text();
+        const rows = text.split('\n').filter(r=>r.trim()).map(r=>r.split(',').map(c=>c.trim()));
+        if (rows.length) familyData = parseData(rows);
+      } else {
+        await loadScript('https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js');
+        const data = await file.arrayBuffer();
+        const wb = XLSX.read(data);
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        if (rows.length) familyData = parseData(rows);
+      }
+      rebuildIndex();
+      generationSet = new Set(familyData.map(p=>p.generation).filter(Boolean));
+      renderGenButtons();
+      filterAndRenderList();
+      if (currentPerson && !personMap.has(currentPerson.name)) {
+        currentPerson = familyData[0];
+      }
+      renderProfileAndTree(currentPerson);
+      alert(`成功导入 ${familyData.length} 条记录`);
+    }
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      handleFileUpload(file).catch(err => alert('处理出错: '+err));
+      fileInput.value = '';
+    });
+
+    renderGenButtons();
+    filterAndRenderList();
+    renderProfileAndTree(currentPerson);
+  })();
+</script>
+</body>
+</html>
