@@ -55,3 +55,5 @@ Actions 会自动运行 `build.py` 并提交新的 `data.json`，网站随即更
 - **Excel 打开 CSV 中文乱码**：本仓库的 `source.csv` 是 UTF-8 带 BOM 格式，Excel 可直接识别；请勿另存为 GBK/ANSI。
 - **没有 Python**：装 [Python 3](https://www.python.org/downloads/) 并勾选 Add to PATH，或改用 `source.xlsx` + 让有 Python 的电脑跑一次构建。
 - **页面上的“本地数据预览”按钮**：仅用于临时预览你自己的 Excel/CSV，数据不会保存到线上；线上数据永远来自 `data.json`。
+
+- 前台演示 : https://xushizupu.github.io/
