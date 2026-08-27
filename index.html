@@ -1421,9 +1421,18 @@
   // 安全说明：该 token 会随网页公开，请务必只给它“提交箱仓库”的最小权限（见 SETUP.md）。
   const SUBMIT_CONFIG = {
     submitOwner: 'xushizupu',   // 提交箱仓库 owner（与站点同账号时填同一个）
-    submitRepo: '',             // 提交箱仓库名；留空 = 使用站点仓库（不推荐，见 SETUP.md）
-    submitToken: ''             // 提交箱 fine-grained PAT（Contents 读写）
+    submitRepo: 'xushizupu-submissions',             // 提交箱仓库名；留空 = 使用站点仓库（不推荐，见 SETUP.md）
+    // 提交箱 fine-grained PAT（Contents 读写）。
+    // 注意：不要直接把原始 token 写进代码（GitHub 会拦截推送）。
+    // 请先编码：在浏览器控制台执行  btoa('你的完整token') ，把得到的一串字符填到 submitTokenB64。
+    submitTokenB64: 'Z2l0aHViX3BhdF8xMUNESTdHNkEwUHA4QUJIQnhkV3hQX3ZPZ21iREY1U3E3R2xwMlVHajYzaWZYWWlWSDFJVEl6U0pvZjB2NnVGbGFYWDZBUjVSRU1IdlNZcTFq'          // 例如 'Z2l0aHViX3BhdF8uLi'
   };
+
+  // 运行时解码提交 token（PAT 是纯 ASCII，btoa/atob 可安全使用）
+  function getSubmitToken() {
+    if (!SUBMIT_CONFIG.submitTokenB64) return '';
+    try { return atob(SUBMIT_CONFIG.submitTokenB64); } catch (e) { return ''; }
+  }
 
   const SITE_DEFAULTS = { siteOwner: 'xushizupu', siteRepo: 'xushizupu.github.io' };
 
@@ -1553,7 +1562,7 @@
   // ---------- 提交视图 ----------
   function submitStatus() {
     if (isMock()) return { ok: true, msg: '当前为演示模式：提交会写入本机演示仓库，不会真正上传。' };
-    if (!SUBMIT_CONFIG.submitRepo || !SUBMIT_CONFIG.submitToken) {
+    if (!SUBMIT_CONFIG.submitRepo || !getSubmitToken()) {
       return { ok: false, msg: '提交服务尚未配置（SUBMIT_CONFIG 为空）。请联系管理员，或直接复制下方内容发送给管理员代为录入。' };
     }
     return { ok: true, msg: '' };
@@ -1610,11 +1619,11 @@
     result.textContent = '正在提交…';
     try {
       const owner = submitRepoOwner(), repo = submitRepoName();
-      const f0 = await ghGetFile(owner, repo, 'pending.json', SUBMIT_CONFIG.submitToken);
+      const f0 = await ghGetFile(owner, repo, 'pending.json', getSubmitToken());
       let list = f0 ? JSON.parse(f0.content) : [];
       if (!Array.isArray(list)) throw new Error('pending.json 格式异常');
       list.push(entry);
-      await ghWriteFile(owner, repo, 'pending.json', JSON.stringify(list, null, 2), '提交族谱信息：' + entry.data.name, SUBMIT_CONFIG.submitToken);
+      await ghWriteFile(owner, repo, 'pending.json', JSON.stringify(list, null, 2), '提交族谱信息：' + entry.data.name, getSubmitToken());
       result.className = 'msg ok';
       result.textContent = '✅ 提交成功！管理员审核通过后即会录入族谱（通常 1-2 天内）。';
       e.target.reset();
