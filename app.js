@@ -657,6 +657,18 @@
     document.getElementById('adminPanel').style.display = '';
   }
 
+  // 登录前先用 GitHub API 验证 token：有效且有仓库读权限才允许进入后台
+  async function verifyToken(owner, repo, token) {
+    const res = await fetch(GH_API + '/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo), {
+      headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token }
+    });
+    if (res.status === 401) throw new Error('Token 无效或已过期（Bad credentials）');
+    if (res.status === 403) throw new Error('Token 没有该仓库的访问权限（请检查 Repository access）');
+    if (res.status === 404) throw new Error('仓库不存在或无访问权限，请检查 Owner / 仓库名');
+    if (!res.ok) throw new Error('验证失败：HTTP ' + res.status);
+    return true;
+  }
+
   async function loadAdminView() {
     document.getElementById('adExitMockBtn').style.display = isMock() ? '' : 'none';
     const sc = getSiteConfig();
@@ -664,11 +676,30 @@
     document.getElementById('ad_repo').value = sc.siteRepo;
     const saved = localStorage.getItem('xszp_admintoken');
     if (saved) document.getElementById('ad_token').value = saved;
-    if (saved || isMock()) {
+    const msg = document.getElementById('adLoginMsg');
+    if (isMock()) {
       adminLogged = true;
-      adminToken = saved || 'mock';
+      adminToken = 'mock';
       showAdminPanel();
-      try { await refreshAdminData(); } catch (e) { /* 稍后由刷新按钮处理 */ }
+      try { await refreshAdminData(); } catch (e) { /* ignore */ }
+      return;
+    }
+    if (saved) {
+      // 用保存的 token 自动验证，失效则清除并停留在登录页
+      msg.style.display = 'block';
+      try {
+        const c = adminConf();
+        await verifyToken(c.owner || sc.siteOwner, c.repo || sc.siteRepo, saved);
+        adminLogged = true;
+        adminToken = saved;
+        showAdminPanel();
+        await refreshAdminData();
+      } catch (err) {
+        localStorage.removeItem('xszp_admintoken');
+        document.getElementById('ad_token').value = '';
+        msg.className = 'msg error';
+        msg.textContent = '保存的 Token 已失效，请重新登录：' + err.message;
+      }
     }
   }
 
@@ -684,18 +715,32 @@
     const c = adminConf();
     const msg = document.getElementById('adLoginMsg');
     msg.style.display = 'block';
-    if (!c.token && !isMock()) { msg.className = 'msg error'; msg.textContent = '请输入管理员 Token'; return; }
-    adminToken = c.token || 'mock';
-    localStorage.setItem('xszp_admintoken', adminToken);
-    localStorage.setItem('xszp_site', JSON.stringify({ siteOwner: c.owner || getSiteConfig().siteOwner, siteRepo: c.repo || getSiteConfig().siteRepo }));
-    adminLogged = true;
-    showAdminPanel();
+    if (isMock()) {
+      adminToken = 'mock';
+      adminLogged = true;
+      showAdminPanel();
+      try { await refreshAdminData(); } catch (e) { /* ignore */ }
+      return;
+    }
+    if (!c.token) { msg.className = 'msg error'; msg.textContent = '请输入管理员 Token'; return; }
+    const owner = c.owner || getSiteConfig().siteOwner;
+    const repo = c.repo || getSiteConfig().siteRepo;
+    msg.className = 'msg';
+    msg.textContent = '正在验证 Token…';
     try {
+      await verifyToken(owner, repo, c.token);
+      adminToken = c.token;
+      localStorage.setItem('xszp_admintoken', adminToken);
+      localStorage.setItem('xszp_site', JSON.stringify({ siteOwner: owner, siteRepo: repo }));
+      adminLogged = true;
+      showAdminPanel();
       await refreshAdminData();
-      msg.className = 'msg ok'; msg.textContent = '✅ 已连接仓库';
+      msg.className = 'msg ok';
+      msg.textContent = '✅ 已连接仓库';
     } catch (err) {
+      // 验证失败：停留在登录页，不进入后台
       msg.className = 'msg error';
-      msg.textContent = '读取仓库失败：' + err.message + '（可先点“演示模式”本地试用）';
+      msg.textContent = '无法进入后台：' + err.message;
     }
   });
 
