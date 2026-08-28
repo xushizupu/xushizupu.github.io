@@ -658,6 +658,7 @@
   }
 
   async function loadAdminView() {
+    document.getElementById('adExitMockBtn').style.display = isMock() ? '' : 'none';
     const sc = getSiteConfig();
     document.getElementById('ad_owner').value = sc.siteOwner;
     document.getElementById('ad_repo').value = sc.siteRepo;
@@ -704,6 +705,11 @@
     adminLogged = true;
     showAdminPanel();
     try { await refreshAdminData(); } catch (e) { /* ignore */ }
+  });
+
+  document.getElementById('adExitMockBtn').addEventListener('click', function () {
+    localStorage.removeItem('xszp_mock');
+    location.reload();
   });
 
   document.getElementById('adLogoutBtn').addEventListener('click', function () {
