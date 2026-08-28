@@ -15,6 +15,7 @@
     - 生成 data.json 后提交到 GitHub 即可自动上线
 """
 import csv
+import io
 import json
 import os
 import sys
@@ -36,8 +37,18 @@ def read_rows(path):
         wb.close()
         return rows
     if ext == ".csv":
-        with open(path, "r", encoding="utf-8-sig", newline="") as f:
-            return [row for row in csv.reader(f) if any(str(c).strip() for c in row)]
+        # Excel 在中文系统上可能把 CSV 存成 GBK/ANSI，这里自动识别编码
+        raw = open(path, "rb").read()
+        text = None
+        for enc in ("utf-8-sig", "gbk", "latin-1"):
+            try:
+                text = raw.decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        if text is None:
+            text = raw.decode("utf-8", errors="replace")
+        return [row for row in csv.reader(io.StringIO(text)) if any(str(c).strip() for c in row)]
     sys.exit("不支持的文件类型: %s（仅支持 .xlsx / .csv）" % ext)
 
 
