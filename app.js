@@ -123,6 +123,7 @@
       const data = await res.json();
       const records = Array.isArray(data) ? data : (data.records || []);
       setData(records);
+      clearAutofilledSearch();
       applyHash();
     } catch (err) {
       statsDisplay.textContent = '⚠️ 数据加载失败';
@@ -213,9 +214,24 @@
 
   // 搜索防抖（停顿 250ms 才搜索，避免每个按键全表扫描+重渲染）
   searchInput.addEventListener('input', debounce(function (e) {
+    searchInput.dataset.touched = '1';
     searchTerm = e.target.value;
     filterAndRenderList();
   }, 250));
+
+  // 防止浏览器自动填充搜索框（Chrome 有时忽略 autocomplete=off）：
+  // 初始 readonly，点击/聚焦时才变为可输入；加载时若发现非用户输入的残留值则清空。
+  searchInput.addEventListener('focus', function () {
+    searchInput.removeAttribute('readonly');
+  });
+  function clearAutofilledSearch() {
+    if (!searchInput.dataset.touched && searchInput.value) {
+      searchInput.value = '';
+      searchTerm = '';
+      filterAndRenderList();
+    }
+  }
+  window.addEventListener('pageshow', clearAutofilledSearch);
 
   // ---------- 选中与详情 ----------
   function selectPerson(p, scroll) {

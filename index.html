@@ -27,7 +27,7 @@
   <div class="search-bar" id="searchBar">
     <div class="search-wrapper">
       <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="搜索姓名、职业、父亲…" autocomplete="off">
+      <input type="text" id="searchInput" placeholder="搜索姓名、职业、父亲…" autocomplete="off" readonly>
     </div>
     <div class="stats-badge" id="statsDisplay">加载数据…</div>
   </div>
@@ -98,9 +98,9 @@
         <h3>登录</h3>
         <p class="hint">使用你的 GitHub 管理员 Token（fine-grained PAT）。Token 只保存在本浏览器，不会上传到任何服务器。配置方法见 SETUP.md。</p>
         <div class="form-grid">
-          <label>站点仓库 Owner<input id="ad_owner" placeholder="xushizupu"></label>
-          <label>站点仓库名<input id="ad_repo" placeholder="xushizupu.github.io"></label>
-          <label>管理员 Token<input id="ad_token" type="password" placeholder="github_pat_..."></label>
+          <label>站点仓库 Owner<input id="ad_owner" placeholder="xushizupu" autocomplete="off"></label>
+          <label>站点仓库名<input id="ad_repo" placeholder="xushizupu.github.io" autocomplete="off"></label>
+          <label>管理员 Token<input id="ad_token" type="password" placeholder="github_pat_..." autocomplete="new-password"></label>
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-primary" id="adLoginBtn">登录</button>
