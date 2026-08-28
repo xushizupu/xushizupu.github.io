@@ -497,6 +497,13 @@
     return new URLSearchParams(location.search).get('mock') === '1' || localStorage.getItem('xszp_mock') === '1';
   }
 
+  // ---------- Base64 / 下载工具 ----------
+  function toBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
   function fromBase64Bytes(b64) {
     const bin = atob(b64);
     const bytes = new Uint8Array(bin.length);
