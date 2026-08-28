@@ -785,3 +785,28 @@
     .footer-admin { margin-top:8px; }
     .footer-admin a { color:#c4b6a6; font-size:0.7rem; text-decoration:none; }
     .footer-admin a:hover { color:#a08a6f; }
+
+    /* ===== 移动端：世系图自适应，尽量收进屏幕内 ===== */
+    @media (max-width: 767px) {
+      .tree-container {
+        padding: 14px 6px;
+      }
+      .family-tree-vis {
+        min-width: 0;
+        width: 100%;
+      }
+      .tree-level {
+        gap: 6px 8px;
+        margin: 3px 0;
+      }
+      .tree-node {
+        min-width: 0;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+        border-radius: 22px;
+      }
+      .connector-line {
+        font-size: 0.85rem;
+        margin: 1px 0;
+      }
+    }
